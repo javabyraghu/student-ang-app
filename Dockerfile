@@ -1,8 +1,26 @@
-# Use official nginx image as the base image
+# Use the official Node.js image as the base image
+FROM node:14 as build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the package.json and package-lock.json files to the container
+COPY package*.json ./
+
+# Install the project dependencies
+RUN npm install
+
+# Copy the rest of the application code to the container
+COPY . .
+
+# Build the Angular app
+RUN npm run build
+
+# Use a lightweight HTTP server as the base image
 FROM nginx:latest
 
-# Copy the build output to replace the default nginx contents.
-COPY /dist/student-ang-app /usr/share/nginx/html
+# Copy the built Angular app from the previous stage to the Nginx container
+COPY --from=build /app/dist/student-ang-app /usr/share/nginx/html
 
-# Expose port 80
+# Expose the default Nginx port
 EXPOSE 80
