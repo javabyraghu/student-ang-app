@@ -22,5 +22,7 @@ FROM nginx:latest
 # Copy the built Angular app from the previous stage to the Nginx container
 COPY --from=build /app/dist/student-ang-app /usr/share/nginx/html
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Expose the default Nginx port
 EXPOSE 80
